@@ -1,0 +1,20 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace CarRentalApi.Models
+{
+    public class User
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public string Username { get; set; } = string.Empty;
+
+        [Required]
+        public string Password { get; set; } = string.Empty;
+
+        // Rolė: "Guest", "User", "Admin"
+        [Required]
+        public string Role { get; set; } = "User";
+    }
+}
