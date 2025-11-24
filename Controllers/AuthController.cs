@@ -13,6 +13,7 @@ namespace CarRentalApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -40,8 +41,8 @@ namespace CarRentalApi.Controllers
             var user = new User
             {
                 Username = dto.Username,
-                Password = dto.Password,  // paprastumo dėlei; vėliau galima daryti hash
-                Role = dto.Role           // "User", "Admin" ir t.t.
+                Password = dto.Password,
+                Role = dto.Role
             };
 
             _context.Users.Add(user);

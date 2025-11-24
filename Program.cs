@@ -46,12 +46,18 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Swagger UI
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
 }
+
+// Swagger UI
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarRentalApi v1");
+});
 
 app.UseHttpsRedirection();
 

@@ -13,7 +13,6 @@ namespace CarRentalApi.Models
         [Required]
         public string Password { get; set; } = string.Empty;
 
-        // Rolė: "Guest", "User", "Admin"
         [Required]
         public string Role { get; set; } = "User";
     }

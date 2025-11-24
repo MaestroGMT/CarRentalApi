@@ -9,6 +9,7 @@ namespace CarRentalApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class CarsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -18,8 +19,9 @@ namespace CarRentalApi.Controllers
             _context = context;
         }
 
-        // GET /cars
+        // GET /api/Cars
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<CarDto>>> GetCars()
         {
@@ -37,14 +39,17 @@ namespace CarRentalApi.Controllers
             return Ok(result);
         }
 
-        // GET /cars/{id}
+        // GET /api/Cars/{id}
         [HttpGet("{id}")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CarDto>> GetCarById(int id)
         {
-            var car = await _context.Cars.Include(c => c.CarClass).FirstOrDefaultAsync(c => c.Id == id);
+            var car = await _context.Cars.Include(c => c.CarClass)
+                                         .FirstOrDefaultAsync(c => c.Id == id);
             if (car == null) return NotFound();
+
             var dto = new CarDto
             {
                 Id = car.Id,
@@ -58,7 +63,7 @@ namespace CarRentalApi.Controllers
             return Ok(dto);
         }
 
-        // POST /cars
+        // POST /api/Cars
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -67,12 +72,16 @@ namespace CarRentalApi.Controllers
             var carClass = await _context.CarClasses.FindAsync(dto.CarClassId);
             if (carClass == null)
                 return BadRequest($"CarClass with Id {dto.CarClassId} not found.");
-            var exists = await _context.Cars.AnyAsync(c => c.PlateNumber.ToLower() == dto.PlateNumber.ToLower());
+
+            var plate = dto.PlateNumber.Trim();
+            var exists = await _context.Cars
+                .AnyAsync(c => c.PlateNumber.ToLower() == plate.ToLower());
             if (exists)
-                return BadRequest($"Car with plate number '{dto.PlateNumber}' already exists.");
+                return Conflict($"Car with plate number '{plate}' already exists."); // 409 logiškiau
+
             var car = new Car
             {
-                PlateNumber = dto.PlateNumber,
+                PlateNumber = plate,
                 Brand = dto.Brand,
                 Model = dto.Model,
                 IsAvailable = dto.IsAvailable,
@@ -96,7 +105,7 @@ namespace CarRentalApi.Controllers
             return CreatedAtAction(nameof(GetCarById), new { id = car.Id }, result);
         }
 
-        // DELETE /cars/{id}
+        // DELETE /api/Cars/{id}
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -111,9 +120,10 @@ namespace CarRentalApi.Controllers
             return NoContent();
         }
 
-        // PUT /cars/{id} (pilnas atnaujinimas)
+        // PUT /api/Cars/{id}
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CarDto>> UpdateCar(int id, [FromBody] CarCreateDto dto)
         {
@@ -123,12 +133,14 @@ namespace CarRentalApi.Controllers
             var carClass = await _context.CarClasses.FindAsync(dto.CarClassId);
             if (carClass == null)
                 return BadRequest($"CarClass with Id {dto.CarClassId} not found.");
-            
-            var exists = await _context.Cars.AnyAsync(c => c.PlateNumber.ToLower() == dto.PlateNumber.ToLower());
-            if (exists)
-                return BadRequest($"Car with plate number '{dto.PlateNumber}' already exists.");
 
-            car.PlateNumber = dto.PlateNumber;
+            var plate = dto.PlateNumber.Trim();
+            var exists = await _context.Cars
+                .AnyAsync(c => c.Id != id && c.PlateNumber.ToLower() == plate.ToLower());
+            if (exists)
+                return Conflict($"Car with plate number '{plate}' already exists.");
+
+            car.PlateNumber = plate;
             car.Brand = dto.Brand;
             car.Model = dto.Model;
             car.IsAvailable = dto.IsAvailable;

@@ -15,7 +15,6 @@ namespace CarRentalApi.Models
 
         public bool IsAvailable { get; set; } = true;
 
-        // Foreign key į CarClass
         public int CarClassId { get; set; }
         public CarClass? CarClass { get; set; }
     }

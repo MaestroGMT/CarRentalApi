@@ -1,0 +1,5 @@
+{
+    "appService.preDeployTask": "publish-release",
+    "appService.deploySubpath": "bin\\Release\\net8.0\\publish",
+    "appService.defaultWebAppToDeploy": "/subscriptions/77231e1f-e7b6-4ea3-92a0-fd24be0a15e6/resourceGroups/carrentalapi-arijus_group/providers/Microsoft.Web/sites/carrentalapi-arijus"
+}

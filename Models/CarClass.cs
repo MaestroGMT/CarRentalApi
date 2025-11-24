@@ -6,6 +6,5 @@ public class CarClass
     public string Name { get; set; } = "";
     public string Description { get; set; } = "";
 
-    // Ryšys: viena klasė turi daug automobilių
     public ICollection<Car>? Cars { get; set; }
 }
