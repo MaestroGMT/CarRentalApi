@@ -51,6 +51,52 @@ namespace CarRentalApi.Controllers
             return Ok(new { message = "User created" });
         }
 
+        private async Task<string> CreateRefreshToken(User user)
+        {
+            var refreshToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray())
+                                + Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+
+            var entity = new RefreshToken
+            {
+                Token = refreshToken,
+                UserId = user.Id,
+                ExpiresAt = DateTime.UtcNow.AddDays(14) // refresh galioja 14 dienų
+            };
+
+            _context.RefreshTokens.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return refreshToken;
+        }
+
+        // POST: api/Auth/refresh
+        [HttpPost("refresh")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Refresh([FromBody] RefreshRequestDto dto)
+        {
+            var tokenEntity = await _context.RefreshTokens
+                .Include(rt => rt.User)
+                .SingleOrDefaultAsync(rt => rt.Token == dto.RefreshToken);
+
+            if (tokenEntity == null || tokenEntity.Revoked || tokenEntity.ExpiresAt < DateTime.UtcNow)
+                return Unauthorized("Invalid refresh token.");
+
+            // ✅ ROTACIJA: seną refresh atšaukiam
+            tokenEntity.Revoked = true;
+
+            var newAccessToken = GenerateJwtToken(tokenEntity.User);
+            var newRefreshToken = await CreateRefreshToken(tokenEntity.User);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                accessToken = newAccessToken,
+                refreshToken = newRefreshToken
+            });
+        }
+
         // POST: api/Auth/login
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -61,9 +107,33 @@ namespace CarRentalApi.Controllers
             if (user == null || user.Password != dto.Password)
                 return Unauthorized("Invalid username or password.");
 
-            var token = GenerateJwtToken(user);
-            return Ok(new { token });
+            var accessToken = GenerateJwtToken(user);
+            var refreshToken = await CreateRefreshToken(user);
+
+            return Ok(new
+            {
+                accessToken,
+                refreshToken
+            });
         }
+        // POST: api/Auth/logout
+        [HttpPost("logout")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Logout([FromBody] RefreshRequestDto dto)
+        {
+            var tokenEntity = await _context.RefreshTokens
+                .SingleOrDefaultAsync(rt => rt.Token == dto.RefreshToken);
+
+            if (tokenEntity != null)
+            {
+                tokenEntity.Revoked = true;
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok(new { message = "Logged out" });
+        }
+
 
         private string GenerateJwtToken(User user)
         {

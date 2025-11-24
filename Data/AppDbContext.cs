@@ -11,5 +11,6 @@ public class AppDbContext : DbContext
     public DbSet<Car> Cars => Set<Car>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
     public DbSet<User> Users { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
 }

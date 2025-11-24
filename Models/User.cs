@@ -15,5 +15,7 @@ namespace CarRentalApi.Models
 
         [Required]
         public string Role { get; set; } = "User";
+        public List<RefreshToken> RefreshTokens { get; set; } = new();
+
     }
 }
