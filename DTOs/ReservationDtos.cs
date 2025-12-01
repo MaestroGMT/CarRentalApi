@@ -16,6 +16,7 @@ namespace CarRentalApi.DTO
         public DateTime DateTo { get; set; }
         public int CarId { get; set; }
         public string CarPlateNumber { get; set; } = string.Empty;
+        public string? CarImageUrl { get; set; }
         public int UserId { get; set; }
     }
 }

@@ -6,7 +6,7 @@ namespace CarRentalApi.DTO
         public string PlateNumber { get; set; } = string.Empty;
         public string Brand { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;
-
+        public string? ImageUrl { get; set; }
         public bool IsAvailable { get; set; }
         public int CarClassId { get; set; }
         public string? CarClassName { get; set; }
@@ -16,6 +16,7 @@ namespace CarRentalApi.DTO
         public string PlateNumber { get; set; } = string.Empty;
         public string Brand { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
         public bool IsAvailable { get; set; } = true;
         public int CarClassId { get; set; }
     }

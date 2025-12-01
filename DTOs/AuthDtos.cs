@@ -4,12 +4,25 @@ namespace CarRentalApi.DTO
     {
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public string Role { get; set; } = "User"; // galima leisti pasirinkti "User" / "Admin"
+        public string Role { get; set; } = "User";
     }
 
     public class LoginDto
     {
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+    }
+
+    public class ProfileDto
+    {
+        public int Id { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public string Role { get; set; } = "User";
+    }
+
+    public class UpdateProfileDto
+    {
+        public string? Username { get; set; }
+        public string? Password { get; set; }
     }
 }

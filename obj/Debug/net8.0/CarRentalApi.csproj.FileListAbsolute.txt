@@ -166,3 +166,5 @@ C:\Users\ariju\CarRentalApi\obj\Debug\net8.0\refint\CarRentalApi.dll
 C:\Users\ariju\CarRentalApi\obj\Debug\net8.0\CarRentalApi.pdb
 C:\Users\ariju\CarRentalApi\obj\Debug\net8.0\CarRentalApi.genruntimeconfig.cache
 C:\Users\ariju\CarRentalApi\obj\Debug\net8.0\ref\CarRentalApi.dll
+C:\Users\ariju\CarRentalApi\bin\Debug\net8.0\car-rental-ui\package-lock.json
+C:\Users\ariju\CarRentalApi\bin\Debug\net8.0\car-rental-ui\package.json

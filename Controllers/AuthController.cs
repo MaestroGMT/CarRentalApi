@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace CarRentalApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -25,8 +25,21 @@ namespace CarRentalApi.Controllers
             _configuration = configuration;
         }
 
+        private int GetUserIdFromToken()
+        {
+            var idClaim =
+                User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            if (string.IsNullOrWhiteSpace(idClaim) || !int.TryParse(idClaim, out var userId))
+                throw new UnauthorizedAccessException("User id claim not found.");
+
+            return userId;
+        }
+
         // POST: api/Auth/signup
         [HttpPost("signup")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Signup([FromBody] SignupDto dto)
@@ -71,6 +84,7 @@ namespace CarRentalApi.Controllers
 
         // POST: api/Auth/refresh
         [HttpPost("refresh")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Refresh([FromBody] RefreshRequestDto dto)
@@ -99,6 +113,7 @@ namespace CarRentalApi.Controllers
 
         // POST: api/Auth/login
         [HttpPost("login")]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
@@ -132,6 +147,63 @@ namespace CarRentalApi.Controllers
             }
 
             return Ok(new { message = "Logged out" });
+        }
+
+        // GET: api/Auth/me
+        [HttpGet("me")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ProfileDto>> Me()
+        {
+            var userId = GetUserIdFromToken();
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return Unauthorized();
+
+            return Ok(new ProfileDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Role = user.Role
+            });
+        }
+
+        // PATCH: api/Auth/me
+        [HttpPatch("me")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ProfileDto>> UpdateMe([FromBody] UpdateProfileDto dto)
+        {
+            var userId = GetUserIdFromToken();
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return Unauthorized();
+
+            if (!string.IsNullOrWhiteSpace(dto.Username))
+            {
+                var newUsername = dto.Username.Trim();
+                if (!string.Equals(newUsername, user.Username, StringComparison.OrdinalIgnoreCase))
+                {
+                    var exists = await _context.Users.AnyAsync(u =>
+                        u.Id != userId && u.Username.ToLower() == newUsername.ToLower());
+                    if (exists)
+                        return Conflict("Username is already taken.");
+
+                    user.Username = newUsername;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+            {
+                user.Password = dto.Password;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new ProfileDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Role = user.Role
+            });
         }
 
 

@@ -25,8 +25,8 @@ public class ReservationsController : ControllerBase
     private int GetUserId()
     {
         var idClaim =
-            User.FindFirstValue(ClaimTypes.NameIdentifier) // dažniausiai čia atsiduria sub
-            ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub); // jei map’inimas išjungtas
+            User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
         if (string.IsNullOrWhiteSpace(idClaim) || !int.TryParse(idClaim, out var userId))
             throw new UnauthorizedAccessException("User id claim not found in token.");
@@ -62,6 +62,32 @@ public class ReservationsController : ControllerBase
             DateTo = r.DateTo,
             CarId = r.CarId,
             CarPlateNumber = r.Car.PlateNumber,
+            CarImageUrl = r.Car.ImageUrl,
+            UserId = r.UserId
+        });
+
+        return Ok(result);
+    }
+
+    // GET: api/Reservations/car/{carId}
+    [HttpGet("car/{carId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<ReservationDto>>> GetReservationsForCar(int carId)
+    {
+        var reservations = await _context.Reservations
+            .Include(r => r.Car)
+            .Where(r => r.CarId == carId)
+            .ToListAsync();
+
+        var result = reservations.Select(r => new ReservationDto
+        {
+            Id = r.Id,
+            CustomerName = r.CustomerName,
+            DateFrom = r.DateFrom,
+            DateTo = r.DateTo,
+            CarId = r.CarId,
+            CarPlateNumber = r.Car.PlateNumber,
+            CarImageUrl = r.Car.ImageUrl,
             UserId = r.UserId
         });
 
@@ -82,7 +108,7 @@ public class ReservationsController : ControllerBase
         if (reservation == null) return NotFound();
 
         if (!IsAdmin() && reservation.UserId != GetUserId())
-            return Forbid(); // 403
+            return Forbid();
 
         var dto = new ReservationDto
         {
@@ -92,6 +118,7 @@ public class ReservationsController : ControllerBase
             DateTo = reservation.DateTo,
             CarId = reservation.CarId,
             CarPlateNumber = reservation.Car.PlateNumber,
+            CarImageUrl = reservation.Car.ImageUrl,
             UserId = reservation.UserId
         };
 
@@ -99,7 +126,6 @@ public class ReservationsController : ControllerBase
     }
 
     // POST: api/Reservations
-    // User sukuria savo vardu (UserId iš tokeno)
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -143,6 +169,7 @@ public class ReservationsController : ControllerBase
             DateTo = reservation.DateTo,
             CarId = reservation.CarId,
             CarPlateNumber = car.PlateNumber,
+            CarImageUrl = car.ImageUrl,
             UserId = reservation.UserId
         };
 
@@ -192,6 +219,7 @@ public class ReservationsController : ControllerBase
             DateTo = reservation.DateTo,
             CarId = reservation.CarId,
             CarPlateNumber = reservation.Car.PlateNumber,
+            CarImageUrl = reservation.Car.ImageUrl,
             UserId = reservation.UserId
         };
 

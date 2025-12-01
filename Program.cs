@@ -10,6 +10,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=car_rental.db"));
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173") // tavo React UI
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 // JSON fix (ignore cycles)
 builder.Services.AddControllers()
     .AddJsonOptions(x =>
@@ -61,8 +72,9 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
-// !!! VERY IMPORTANT ORDER !!!
-app.UseAuthentication();   // <<<<<<<<<<<<<< μissing before
+app.UseCors("Frontend");
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

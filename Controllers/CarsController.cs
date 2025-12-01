@@ -32,6 +32,7 @@ namespace CarRentalApi.Controllers
                 PlateNumber = c.PlateNumber,
                 Brand = c.Brand,
                 Model = c.Model,
+                ImageUrl = c.ImageUrl,
                 IsAvailable = c.IsAvailable,
                 CarClassId = c.CarClassId,
                 CarClassName = c.CarClass?.Name
@@ -56,6 +57,7 @@ namespace CarRentalApi.Controllers
                 PlateNumber = car.PlateNumber,
                 Brand = car.Brand,
                 Model = car.Model,
+                ImageUrl = car.ImageUrl,
                 IsAvailable = car.IsAvailable,
                 CarClassId = car.CarClassId,
                 CarClassName = car.CarClass?.Name
@@ -84,6 +86,7 @@ namespace CarRentalApi.Controllers
                 PlateNumber = plate,
                 Brand = dto.Brand,
                 Model = dto.Model,
+                ImageUrl = dto.ImageUrl,
                 IsAvailable = dto.IsAvailable,
                 CarClassId = dto.CarClassId
             };
@@ -97,6 +100,7 @@ namespace CarRentalApi.Controllers
                 PlateNumber = car.PlateNumber,
                 Brand = car.Brand,
                 Model = car.Model,
+                ImageUrl = car.ImageUrl,
                 IsAvailable = car.IsAvailable,
                 CarClassId = car.CarClassId,
                 CarClassName = carClass.Name
@@ -143,6 +147,7 @@ namespace CarRentalApi.Controllers
             car.PlateNumber = plate;
             car.Brand = dto.Brand;
             car.Model = dto.Model;
+            car.ImageUrl = dto.ImageUrl;
             car.IsAvailable = dto.IsAvailable;
             car.CarClassId = dto.CarClassId;
 
@@ -154,6 +159,7 @@ namespace CarRentalApi.Controllers
                 PlateNumber = car.PlateNumber,
                 Brand = car.Brand,
                 Model = car.Model,
+                ImageUrl = car.ImageUrl,
                 IsAvailable = car.IsAvailable,
                 CarClassId = car.CarClassId,
                 CarClassName = carClass.Name
