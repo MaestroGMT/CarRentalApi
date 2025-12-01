@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins("http://localhost:5173",
-            "https://hcarrentalapi-arijus-hpf6e2d7anbsb8g9.westeurope-01.azurewebsites.net")
+            "https://blue-field-068590303.3.azurestaticapps.net")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
