@@ -16,7 +16,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("Frontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173") // tavo React UI
+            .WithOrigins("http://localhost:5173",
+            "https://hcarrentalapi-arijus-hpf6e2d7anbsb8g9.westeurope-01.azurewebsites.net")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

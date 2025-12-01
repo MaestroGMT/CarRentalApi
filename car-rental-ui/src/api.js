@@ -1,4 +1,4 @@
-export const API_BASE = "http://localhost:5104";
+export const API_BASE = "hcarrentalapi-arijus-hpf6e2d7anbsb8g9.westeurope-01.azurewebsites.net";
 
 export async function login(username, password) {
   const res = await fetch(`${API_BASE}/api/Auth/login`, {
