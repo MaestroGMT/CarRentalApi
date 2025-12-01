@@ -1,6 +1,15 @@
 C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\CarRentalApi.exe
+C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\publish\web.config
 C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\appsettings.Development.json
 C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\appsettings.json
+C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\car-rental-ui\package-lock.json
+C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\car-rental-ui\package.json
+C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\publish\appsettings.Development.json
+C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\publish\appsettings.json
+C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\publish\car-rental-ui\package-lock.json
+C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\publish\car-rental-ui\package.json
+C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\publish\CarRentalApi.deps.json
+C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\publish\CarRentalApi.runtimeconfig.json
 C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\CarRentalApi.dll
 C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\CarRentalApi.runtimeconfig.json
 C:\Users\ariju\CarRentalApi\bin\Release\net8.0\publish\CarRentalApi.pdb
