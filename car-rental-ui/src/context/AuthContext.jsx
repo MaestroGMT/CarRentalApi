@@ -1,6 +1,6 @@
 // src/context/AuthContext.jsx
 import { createContext, useContext, useEffect, useState } from "react";
-import { login as apiLogin } from "../api";
+import { login as apiLogin, register as apiRegister } from "../api";
 
 const AuthContext = createContext(null);
 
@@ -56,6 +56,11 @@ export function AuthProvider({ children }) {
     localStorage.setItem("username", username);
   }
 
+  async function register(username, password) {
+    await apiRegister(username, password);
+    await login(username, password); // auto-login after signup
+  }
+
   function logout() {
     setAccessToken(null);
     setRole(null);
@@ -80,6 +85,7 @@ export function AuthProvider({ children }) {
     isAdmin: role === "Admin",
     isUser: role === "User",
     login,
+    register,
     logout,
     updateProfileLocal
   };

@@ -224,3 +224,15 @@ export async function getCarReservations(token, carId) {
 
   return res.json();
 }
+
+export async function register(username, password, role = "User") {
+  const res = await fetch(`${API_BASE}/api/Auth/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password, role })
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || "Registration failed");
+  }
+}
