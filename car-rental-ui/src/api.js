@@ -1,4 +1,4 @@
-export const API_BASE = "hcarrentalapi-arijus-hpf6e2d7anbsb8g9.westeurope-01.azurewebsites.net";
+export const API_BASE = "https://carrentalapi-arijus-hpf6e2d7anbsb8g9.westeurope-01.azurewebsites.net/api";
 
 export async function login(username, password) {
   const res = await fetch(`${API_BASE}/api/Auth/login`, {
